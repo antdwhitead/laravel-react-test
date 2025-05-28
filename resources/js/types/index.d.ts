@@ -41,3 +41,15 @@ export interface User {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface ChartDataPoint {
+    date: string;
+    count: number;
+}
+
+export interface DashboardData {
+    postsOverTime: ChartDataPoint[];
+    commentsOverTime: ChartDataPoint[];
+    totalPosts: number;
+    totalComments: number;
+}

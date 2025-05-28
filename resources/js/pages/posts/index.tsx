@@ -65,7 +65,7 @@ export default function PostsIndex({ posts }: PostsPageProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Posts" />
             
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
+            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-hidden">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-semibold tracking-tight">Posts</h1>
@@ -98,50 +98,51 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                     </Card>
                 ) : (
                     <div className="space-y-4">
-                        <Card>
-                            <Table>
+                        <Card className="overflow-hidden">
+                            <Table className="table-fixed">
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="w-[40%]">Title</TableHead>
-                                        <TableHead className="w-[20%]">Author</TableHead>
-                                        <TableHead className="w-[20%]">Created</TableHead>
-                                        <TableHead className="w-[10%]">Comments</TableHead>
-                                        <TableHead className="w-[10%]">Actions</TableHead>
+                                        <TableHead className="w-2/5">Title</TableHead>
+                                        <TableHead className="w-1/5">Author</TableHead>
+                                        <TableHead className="w-1/5">Created</TableHead>
+                                        <TableHead className="w-1/10">Comments</TableHead>
+                                        <TableHead className="w-1/10">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {posts.data.map((post) => (
                                         <TableRow key={post.id}>
-                                            <TableCell>
+                                            <TableCell className="whitespace-normal">
                                                 <div>
                                                     <Link 
                                                         href={`/posts/${post.id}`}
-                                                        className="font-medium hover:text-primary transition-colors"
+                                                        className="font-medium hover:text-primary transition-colors block truncate"
+                                                        title={post.name}
                                                     >
                                                         {post.name}
                                                     </Link>
-                                                    <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
-                                                        {post.content.substring(0, 100)}
-                                                        {post.content.length > 100 && '...'}
+                                                    <p className="text-sm text-muted-foreground truncate mt-1">
+                                                        {post.content.substring(0, 80)}
+                                                        {post.content.length > 80 && '...'}
                                                     </p>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-1">
-                                                    <User className="h-3 w-3" />
-                                                    {post.user.name}
+                                                    <User className="h-3 w-3 flex-shrink-0" />
+                                                    <span className="truncate" title={post.user.name}>{post.user.name}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-1">
-                                                    <Clock className="h-3 w-3" />
-                                                    {formatDate(post.created_at)}
+                                                    <Clock className="h-3 w-3 flex-shrink-0" />
+                                                    <span className="text-sm truncate">{formatDate(post.created_at)}</span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-1">
-                                                    <MessageCircle className="h-3 w-3" />
-                                                    {post.comments.length}
+                                            <TableCell className="text-center">
+                                                <div className="flex items-center justify-center gap-1">
+                                                    <MessageCircle className="h-3 w-3 flex-shrink-0" />
+                                                    <span>{post.comments.length}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
@@ -161,7 +162,7 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                         </TableRow>
                                     ))}
                                 </TableBody>
-                            </Table>
+                                </Table>
                         </Card>
 
                         {/* Pagination */}

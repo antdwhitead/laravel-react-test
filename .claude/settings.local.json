@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(php artisan make:migration:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(php artisan make:controller:*)",
+      "Bash(composer test:*)",
+      "Bash(php artisan:*)",
+      "Bash(git commit:*)"
     ]
   },
   "enableAllProjectMcpServers": false

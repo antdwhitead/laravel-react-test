@@ -195,15 +195,6 @@ export default function ShowPost({ post }: PostShowProps) {
                                                     </div>
                                                     <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
                                                 </div>
-                                                {auth.user.id === comment.user.id && (
-                                                    <div className="flex gap-1">
-                                                        <Link href={`/comments/${comment.id}/edit`}>
-                                                            <Button variant="ghost" size="sm">
-                                                                <Edit className="h-3 w-3" />
-                                                            </Button>
-                                                        </Link>
-                                                    </div>
-                                                )}
                                             </div>
                                         </CardContent>
                                     </Card>

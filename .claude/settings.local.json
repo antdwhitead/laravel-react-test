@@ -7,7 +7,8 @@
       "Bash(composer test:*)",
       "Bash(php artisan:*)",
       "Bash(git commit:*)",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(vendor/bin/pest:*)"
     ]
   },
   "enableAllProjectMcpServers": false

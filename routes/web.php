@@ -15,7 +15,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::resource('posts', PostController::class);
-    Route::resource('comments', CommentController::class);
+    
+    // Comment routes - only the ones that are actually used
+    Route::post('comments', [CommentController::class, 'store'])->name('comments.store');
 });
 
 require __DIR__.'/settings.php';

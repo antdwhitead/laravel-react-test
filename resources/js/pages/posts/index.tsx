@@ -1,9 +1,10 @@
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { Plus, User, MessageCircle, Clock } from 'lucide-react';
+import { Plus, User, MessageCircle, Clock, Edit, Eye } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -97,60 +98,75 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                     </Card>
                 ) : (
                     <div className="space-y-4">
-                        {posts.data.map((post) => (
-                            <Card key={post.id} className="hover:shadow-md transition-shadow">
-                                <CardHeader>
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex-1">
-                                            <CardTitle className="text-xl">
-                                                <Link 
-                                                    href={`/posts/${post.id}`}
-                                                    className="hover:text-primary transition-colors"
-                                                >
-                                                    {post.name}
-                                                </Link>
-                                            </CardTitle>
-                                            <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+                        <Card>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-[40%]">Title</TableHead>
+                                        <TableHead className="w-[20%]">Author</TableHead>
+                                        <TableHead className="w-[20%]">Created</TableHead>
+                                        <TableHead className="w-[10%]">Comments</TableHead>
+                                        <TableHead className="w-[10%]">Actions</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {posts.data.map((post) => (
+                                        <TableRow key={post.id}>
+                                            <TableCell>
+                                                <div>
+                                                    <Link 
+                                                        href={`/posts/${post.id}`}
+                                                        className="font-medium hover:text-primary transition-colors"
+                                                    >
+                                                        {post.name}
+                                                    </Link>
+                                                    <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
+                                                        {post.content.substring(0, 100)}
+                                                        {post.content.length > 100 && '...'}
+                                                    </p>
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
                                                 <div className="flex items-center gap-1">
                                                     <User className="h-3 w-3" />
                                                     {post.user.name}
                                                 </div>
+                                            </TableCell>
+                                            <TableCell>
                                                 <div className="flex items-center gap-1">
                                                     <Clock className="h-3 w-3" />
                                                     {formatDate(post.created_at)}
                                                 </div>
+                                            </TableCell>
+                                            <TableCell>
                                                 <div className="flex items-center gap-1">
                                                     <MessageCircle className="h-3 w-3" />
-                                                    {post.comments.length} comments
+                                                    {post.comments.length}
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <p className="text-muted-foreground line-clamp-3">
-                                        {post.content.substring(0, 200)}
-                                        {post.content.length > 200 && '...'}
-                                    </p>
-                                    <div className="flex gap-2 mt-4">
-                                        <Link href={`/posts/${post.id}`}>
-                                            <Button variant="outline" size="sm">
-                                                Read More
-                                            </Button>
-                                        </Link>
-                                        <Link href={`/posts/${post.id}/edit`}>
-                                            <Button variant="outline" size="sm">
-                                                Edit
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                            </TableCell>
+                                            <TableCell>
+                                                <div className="flex gap-1">
+                                                    <Link href={`/posts/${post.id}`}>
+                                                        <Button variant="ghost" size="sm">
+                                                            <Eye className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
+                                                    <Link href={`/posts/${post.id}/edit`}>
+                                                        <Button variant="ghost" size="sm">
+                                                            <Edit className="h-4 w-4" />
+                                                        </Button>
+                                                    </Link>
+                                                </div>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Card>
 
                         {/* Pagination */}
                         {posts.last_page > 1 && (
-                            <div className="flex items-center justify-center gap-2 mt-8">
+                            <div className="flex items-center justify-center gap-2">
                                 {posts.links.map((link, index) => (
                                     <span key={index}>
                                         {link.url ? (

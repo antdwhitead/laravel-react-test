@@ -1,13 +1,12 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
 import { Head, Link, usePage, useForm } from '@inertiajs/react';
-import { ArrowLeft, Edit, Trash2, User, Clock, MessageCircle, Send } from 'lucide-react';
+import { ArrowLeft, Edit, User, Clock, MessageCircle, Send } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import AppLayout from '@/layouts/app-layout';
 
 interface Comment {
@@ -67,7 +66,7 @@ export default function ShowPost({ post }: PostShowProps) {
         e.preventDefault();
 
         submitComment(route('comments.store'), {
-            onSuccess: () => reset('content'),
+            onSuccess: () => setData('content', ''),
         });
     };
 

@@ -23,9 +23,10 @@ class PostSeeder extends Seeder
 
         // Create 100 posts
         Post::factory(100)->create()->each(function (Post $post) use ($users) {
-            // Random number of comments between 10 and 75
-            $commentCount = random_int(10, 75);
-            
+            // Random number of comments between 5 and 10
+            $commentCount = random_int(5, 10);
+
+
             // Create comments for this post
             Comment::factory($commentCount)->create([
                 'post_id' => $post->id,

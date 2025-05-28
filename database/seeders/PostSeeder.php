@@ -14,9 +14,10 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
+        $count = User::query()->count();
         // Ensure we have some users to associate with posts and comments
-        if (User::query()->count() === 0) {
-            User::factory(10)->create();
+        if ($count < 10) {
+            User::factory(10-$count)->create();
         }
 
         $users = User::all();

@@ -32,16 +32,16 @@ export default function Dashboard({ postsOverTime, commentsOverTime, totalPosts,
                         <div className="h-[200px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={postsOverTime}>
-                                    <XAxis 
-                                        dataKey="date" 
+                                    <XAxis
+                                        dataKey="date"
                                         fontSize={12}
                                         axisLine={false}
                                         tickLine={false}
                                     />
                                     <Tooltip />
-                                    <Bar 
-                                        dataKey="count" 
-                                        fill="#000000"
+                                    <Bar
+                                        dataKey="count"
+                                        fill="var(--primary)"
                                     />
                                 </BarChart>
                             </ResponsiveContainer>
@@ -57,16 +57,16 @@ export default function Dashboard({ postsOverTime, commentsOverTime, totalPosts,
                         <div className="h-[200px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={commentsOverTime}>
-                                    <XAxis 
-                                        dataKey="date" 
+                                    <XAxis
+                                        dataKey="date"
                                         fontSize={12}
                                         axisLine={false}
                                         tickLine={false}
                                     />
                                     <Tooltip />
-                                    <Bar 
-                                        dataKey="count" 
-                                        fill="#000000"
+                                    <Bar
+                                        dataKey="count"
+                                        fill="var(--primary)"
                                     />
                                 </BarChart>
                             </ResponsiveContainer>

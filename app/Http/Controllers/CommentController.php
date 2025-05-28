@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Comment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class CommentController extends Controller
 {
@@ -24,5 +21,4 @@ class CommentController extends Controller
 
         return redirect()->route('posts.show', $comment->post);
     }
-
 }

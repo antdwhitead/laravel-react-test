@@ -57,7 +57,7 @@ export default function ShowPost({ post }: PostShowProps) {
         },
     ];
 
-    const { data, setData, post: submitComment, errors, processing, reset } = useForm<CommentForm>({
+    const { data, setData, post: submitComment, errors, processing } = useForm<CommentForm>({
         content: '',
         post_id: post.id,
     });

@@ -14,6 +14,7 @@ interface Post {
     id: number;
     name: string;
     content: string;
+    category?: string;
     created_at: string;
     updated_at: string;
     user: {
@@ -30,6 +31,7 @@ interface EditPostProps {
 type PostForm = {
     name: string;
     content: string;
+    category: string;
 };
 
 export default function EditPost({ post }: EditPostProps) {
@@ -51,6 +53,7 @@ export default function EditPost({ post }: EditPostProps) {
     const { data, setData, put, delete: destroy, errors, processing } = useForm<PostForm>({
         name: post.name,
         content: post.content,
+        category: post.category || '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -113,6 +116,19 @@ export default function EditPost({ post }: EditPostProps) {
                                 </div>
 
                                 <div className="space-y-2">
+                                    <Label htmlFor="category">Category</Label>
+                                    <Input
+                                        id="category"
+                                        type="text"
+                                        value={data.category}
+                                        onChange={(e) => setData('category', e.target.value)}
+                                        placeholder="Enter category..."
+                                        aria-invalid={!!errors.category}
+                                    />
+                                    <InputError message={errors.category} />
+                                </div>
+
+                                <div className="space-y-2">
                                     <Label htmlFor="content">Content</Label>
                                     <textarea
                                         id="content"
@@ -149,6 +165,11 @@ export default function EditPost({ post }: EditPostProps) {
                         <CardContent>
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold">{data.name || 'Untitled Post'}</h3>
+                                {data.category && (
+                                    <div className="text-sm text-muted-foreground">
+                                        Category: {data.category}
+                                    </div>
+                                )}
                                 <div className="prose prose-neutral dark:prose-invert max-w-none">
                                     <div className="whitespace-pre-wrap text-foreground text-sm">
                                         {data.content || 'No content yet...'}

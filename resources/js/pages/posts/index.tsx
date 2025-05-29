@@ -18,6 +18,7 @@ interface Post {
     id: number;
     name: string;
     content: string;
+    category?: string;
     created_at: string;
     updated_at: string;
     user: {
@@ -103,10 +104,11 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead className="w-2/5">Title</TableHead>
-                                        <TableHead className="w-1/5">Author</TableHead>
-                                        <TableHead className="w-1/5">Created</TableHead>
-                                        <TableHead className="w-1/10">Comments</TableHead>
-                                        <TableHead className="w-1/10">Actions</TableHead>
+                                        <TableHead className="w-1/6">Category</TableHead>
+                                        <TableHead className="w-1/6">Author</TableHead>
+                                        <TableHead className="w-1/6">Created</TableHead>
+                                        <TableHead className="w-1/12">Comments</TableHead>
+                                        <TableHead className="w-1/12">Actions</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -126,6 +128,9 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                                         {post.content.length > 80 && '...'}
                                                     </p>
                                                 </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="text-sm">{post.category || 'Uncategorized'}</span>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-1">

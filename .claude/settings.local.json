@@ -8,7 +8,10 @@
       "Bash(php artisan:*)",
       "Bash(git commit:*)",
       "Bash(npx shadcn@latest add:*)",
-      "Bash(vendor/bin/pest:*)"
+      "Bash(vendor/bin/pest:*)",
+      "Bash(npm run types:*)",
+      "Bash(npm run lint)",
+      "Bash(vendor/bin/pint:*)"
     ]
   },
   "enableAllProjectMcpServers": false

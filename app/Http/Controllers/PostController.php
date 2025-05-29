@@ -38,6 +38,7 @@ class PostController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'content' => 'required|string',
+            'category' => 'nullable|string|max:255',
         ]);
 
         $post = $request->user()->posts()->create($validated);
@@ -75,6 +76,7 @@ class PostController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'content' => 'required|string',
+            'category' => 'nullable|string|max:255',
         ]);
 
         $post->update($validated);

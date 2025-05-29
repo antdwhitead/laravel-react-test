@@ -24,12 +24,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 type PostForm = {
     name: string;
     content: string;
+    category: string;
 };
 
 export default function CreatePost() {
     const { data, setData, post, errors, processing, reset } = useForm<PostForm>({
         name: '',
         content: '',
+        category: '',
     });
 
     const submit: FormEventHandler = (e) => {
@@ -79,6 +81,19 @@ export default function CreatePost() {
                                 </div>
 
                                 <div className="space-y-2">
+                                    <Label htmlFor="category">Category</Label>
+                                    <Input
+                                        id="category"
+                                        type="text"
+                                        value={data.category}
+                                        onChange={(e) => setData('category', e.target.value)}
+                                        placeholder="Enter category..."
+                                        aria-invalid={!!errors.category}
+                                    />
+                                    <InputError message={errors.category} />
+                                </div>
+
+                                <div className="space-y-2">
                                     <Label htmlFor="content">Content</Label>
                                     <textarea
                                         id="content"
@@ -115,6 +130,11 @@ export default function CreatePost() {
                         <CardContent>
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold">{data.name || 'Untitled Post'}</h3>
+                                {data.category && (
+                                    <div className="text-sm text-muted-foreground">
+                                        Category: {data.category}
+                                    </div>
+                                )}
                                 <div className="prose prose-neutral dark:prose-invert max-w-none">
                                     <div className="whitespace-pre-wrap text-foreground text-sm">
                                         {data.content || 'No content yet...'}

@@ -24,6 +24,7 @@ interface Post {
     id: number;
     name: string;
     content: string;
+    category?: string;
     created_at: string;
     updated_at: string;
     user: {
@@ -108,6 +109,13 @@ export default function ShowPost({ post }: PostShowProps) {
                                 <MessageCircle className="h-3 w-3" />
                                 {post.comments.length} comments
                             </div>
+                            {post.category && (
+                                <div className="flex items-center gap-1">
+                                    <span className="text-xs px-2 py-1 bg-muted rounded">
+                                        {post.category}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
                     {isOwner && (

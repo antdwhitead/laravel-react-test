@@ -20,6 +20,7 @@ class PostFactory extends Factory
             'user_id' => \App\Models\User::factory(),
             'name' => fake()->sentence(3),
             'content' => fake()->paragraphs(3, true),
+            'category' => fake()->randomElement(['Technology', 'Business', 'Health', 'Travel', 'Food', 'Entertainment', 'Sports', 'Education']),
         ];
     }
 }

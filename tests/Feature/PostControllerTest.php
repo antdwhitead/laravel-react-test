@@ -35,6 +35,7 @@ it('can store a new post', function () {
     $postData = [
         'name' => 'Test Post',
         'content' => 'This is test content for the post.',
+        'category' => 'Technology',
     ];
 
     $response = $this->actingAs($this->user)->post('/posts', $postData);
@@ -43,6 +44,7 @@ it('can store a new post', function () {
     $this->assertDatabaseHas('posts', [
         'name' => 'Test Post',
         'content' => 'This is test content for the post.',
+        'category' => 'Technology',
         'user_id' => $this->user->id,
     ]);
 });
@@ -82,6 +84,7 @@ it('can update a post as owner', function () {
     $updateData = [
         'name' => 'Updated Post Name',
         'content' => 'Updated post content.',
+        'category' => 'Updated Category',
     ];
 
     $response = $this->actingAs($this->user)->put("/posts/{$post->id}", $updateData);
@@ -91,6 +94,7 @@ it('can update a post as owner', function () {
         'id' => $post->id,
         'name' => 'Updated Post Name',
         'content' => 'Updated post content.',
+        'category' => 'Updated Category',
     ]);
 });
 

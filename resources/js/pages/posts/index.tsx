@@ -1,6 +1,6 @@
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/react';
-import { Plus, User, MessageCircle, Clock, Edit, Eye } from 'lucide-react';
+import { Clock, Edit, Eye, MessageCircle, Plus, User } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -65,8 +65,8 @@ export default function PostsIndex({ posts }: PostsPageProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Posts" />
-            
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-hidden">
+
+            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-hidden rounded-xl p-4">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-2xl font-semibold tracking-tight">Posts</h1>
@@ -81,11 +81,11 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                 </div>
 
                 {posts.data.length === 0 ? (
-                    <Card className="text-center py-12">
+                    <Card className="py-12 text-center">
                         <CardContent>
                             <div className="flex flex-col items-center gap-4">
-                                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center">
-                                    <Plus className="h-6 w-6 text-muted-foreground" />
+                                <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-full">
+                                    <Plus className="text-muted-foreground h-6 w-6" />
                                 </div>
                                 <div>
                                     <h3 className="text-lg font-semibold">No posts yet</h3>
@@ -116,14 +116,14 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                         <TableRow key={post.id}>
                                             <TableCell className="whitespace-normal">
                                                 <div>
-                                                    <Link 
+                                                    <Link
                                                         href={`/posts/${post.id}`}
-                                                        className="font-medium hover:text-primary transition-colors block truncate"
+                                                        className="hover:text-primary block truncate font-medium transition-colors"
                                                         title={post.name}
                                                     >
                                                         {post.name}
                                                     </Link>
-                                                    <p className="text-sm text-muted-foreground truncate mt-1">
+                                                    <p className="text-muted-foreground mt-1 truncate text-sm">
                                                         {post.content.substring(0, 80)}
                                                         {post.content.length > 80 && '...'}
                                                     </p>
@@ -135,13 +135,15 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                             <TableCell>
                                                 <div className="flex items-center gap-1">
                                                     <User className="h-3 w-3 flex-shrink-0" />
-                                                    <span className="truncate" title={post.user.name}>{post.user.name}</span>
+                                                    <span className="truncate" title={post.user.name}>
+                                                        {post.user.name}
+                                                    </span>
                                                 </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-1">
                                                     <Clock className="h-3 w-3 flex-shrink-0" />
-                                                    <span className="text-sm truncate">{formatDate(post.created_at)}</span>
+                                                    <span className="truncate text-sm">{formatDate(post.created_at)}</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-center">
@@ -167,7 +169,7 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                         </TableRow>
                                     ))}
                                 </TableBody>
-                                </Table>
+                            </Table>
                         </Card>
 
                         {/* Pagination */}
@@ -178,18 +180,13 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                         {link.url ? (
                                             <Link href={link.url}>
                                                 <Button
-                                                    variant={link.active ? "default" : "outline"}
+                                                    variant={link.active ? 'default' : 'outline'}
                                                     size="sm"
                                                     dangerouslySetInnerHTML={{ __html: link.label }}
                                                 />
                                             </Link>
                                         ) : (
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                disabled
-                                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                            />
+                                            <Button variant="outline" size="sm" disabled dangerouslySetInnerHTML={{ __html: link.label }} />
                                         )}
                                     </span>
                                 ))}

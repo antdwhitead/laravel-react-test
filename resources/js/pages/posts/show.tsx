@@ -1,6 +1,6 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, Link, usePage, useForm } from '@inertiajs/react';
-import { ArrowLeft, Edit, User, Clock, MessageCircle, Send } from 'lucide-react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { ArrowLeft, Clock, Edit, MessageCircle, Send, User } from 'lucide-react';
 import { FormEventHandler } from 'react';
 
 import InputError from '@/components/input-error';
@@ -58,7 +58,13 @@ export default function ShowPost({ post }: PostShowProps) {
         },
     ];
 
-    const { data, setData, post: submitComment, errors, processing } = useForm<CommentForm>({
+    const {
+        data,
+        setData,
+        post: submitComment,
+        errors,
+        processing,
+    } = useForm<CommentForm>({
         content: '',
         post_id: post.id,
     });
@@ -96,7 +102,7 @@ export default function ShowPost({ post }: PostShowProps) {
                     </Link>
                     <div className="flex-1">
                         <h1 className="text-2xl font-semibold tracking-tight">{post.name}</h1>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                        <div className="text-muted-foreground mt-1 flex items-center gap-4 text-sm">
                             <div className="flex items-center gap-1">
                                 <User className="h-3 w-3" />
                                 {post.user.name}
@@ -111,9 +117,7 @@ export default function ShowPost({ post }: PostShowProps) {
                             </div>
                             {post.category && (
                                 <div className="flex items-center gap-1">
-                                    <span className="text-xs px-2 py-1 bg-muted rounded">
-                                        {post.category}
-                                    </span>
+                                    <span className="bg-muted rounded px-2 py-1 text-xs">{post.category}</span>
                                 </div>
                             )}
                         </div>
@@ -130,14 +134,12 @@ export default function ShowPost({ post }: PostShowProps) {
                     )}
                 </div>
 
-                <div className="grid gap-6 max-w-4xl">
+                <div className="grid max-w-4xl gap-6">
                     {/* Post Content */}
                     <Card>
                         <CardContent className="pt-6">
                             <div className="prose prose-neutral dark:prose-invert max-w-none">
-                                <div className="whitespace-pre-wrap text-foreground">
-                                    {post.content}
-                                </div>
+                                <div className="text-foreground whitespace-pre-wrap">{post.content}</div>
                             </div>
                         </CardContent>
                     </Card>
@@ -164,7 +166,7 @@ export default function ShowPost({ post }: PostShowProps) {
                                             onChange={(e) => setData('content', e.target.value)}
                                             placeholder="Write your comment..."
                                             rows={4}
-                                            className="border-input file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground flex w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive resize-none"
+                                            className="border-input file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex w-full min-w-0 resize-none rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                             aria-invalid={!!errors.content}
                                         />
                                         <InputError message={errors.content} />
@@ -182,9 +184,9 @@ export default function ShowPost({ post }: PostShowProps) {
                         <div className="space-y-4">
                             {post.comments.length === 0 ? (
                                 <Card>
-                                    <CardContent className="text-center py-8">
+                                    <CardContent className="py-8 text-center">
                                         <div className="flex flex-col items-center gap-2">
-                                            <MessageCircle className="h-8 w-8 text-muted-foreground" />
+                                            <MessageCircle className="text-muted-foreground h-8 w-8" />
                                             <p className="text-muted-foreground">No comments yet. Be the first to comment!</p>
                                         </div>
                                     </CardContent>
@@ -195,11 +197,9 @@ export default function ShowPost({ post }: PostShowProps) {
                                         <CardContent className="pt-4">
                                             <div className="flex items-start gap-3">
                                                 <div className="flex-1">
-                                                    <div className="flex items-center gap-2 mb-2">
-                                                        <span className="font-medium text-sm">{comment.user.name}</span>
-                                                        <span className="text-muted-foreground text-xs">
-                                                            {formatDate(comment.created_at)}
-                                                        </span>
+                                                    <div className="mb-2 flex items-center gap-2">
+                                                        <span className="text-sm font-medium">{comment.user.name}</span>
+                                                        <span className="text-muted-foreground text-xs">{formatDate(comment.created_at)}</span>
                                                     </div>
                                                     <p className="text-sm whitespace-pre-wrap">{comment.content}</p>
                                                 </div>

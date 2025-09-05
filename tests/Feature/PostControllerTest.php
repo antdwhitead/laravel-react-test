@@ -107,6 +107,45 @@ it('can delete a post as owner', function () {
     $this->assertDatabaseMissing('posts', ['id' => $post->id]);
 });
 
+it('cannot edit post that does not belong to user', function () {
+    $otherUser = User::factory()->create();
+    $post = Post::factory()->create(['user_id' => $otherUser->id]);
+
+    $response = $this->actingAs($this->user)->get("/posts/{$post->id}/edit");
+
+    $response->assertStatus(403);
+});
+
+it('cannot update post that does not belong to user', function () {
+    $otherUser = User::factory()->create();
+    $post = Post::factory()->create(['user_id' => $otherUser->id]);
+
+    $updateData = [
+        'name' => 'Hacked Post Name',
+        'content' => 'Hacked content.',
+        'category' => 'Hacked Category',
+    ];
+
+    $response = $this->actingAs($this->user)->put("/posts/{$post->id}", $updateData);
+
+    $response->assertStatus(403);
+    $this->assertDatabaseHas('posts', [
+        'id' => $post->id,
+        'name' => $post->name,
+        'content' => $post->content,
+    ]);
+});
+
+it('cannot delete post that does not belong to user', function () {
+    $otherUser = User::factory()->create();
+    $post = Post::factory()->create(['user_id' => $otherUser->id]);
+
+    $response = $this->actingAs($this->user)->delete("/posts/{$post->id}");
+
+    $response->assertStatus(403);
+    $this->assertDatabaseHas('posts', ['id' => $post->id]);
+});
+
 it('requires authentication for all routes', function () {
     $post = Post::factory()->create();
 
@@ -117,4 +156,54 @@ it('requires authentication for all routes', function () {
     $this->get("/posts/{$post->id}/edit")->assertRedirect('/login');
     $this->put("/posts/{$post->id}")->assertRedirect('/login');
     $this->delete("/posts/{$post->id}")->assertRedirect('/login');
+});
+
+it('validates post data using StorePostRequest', function () {
+    $response = $this->actingAs($this->user)->post('/posts', [
+        'name' => '',
+        'content' => '',
+    ]);
+
+    $response->assertSessionHasErrors(['name', 'content']);
+});
+
+it('validates post data using UpdatePostRequest', function () {
+    $post = Post::factory()->create(['user_id' => $this->user->id]);
+
+    $response = $this->actingAs($this->user)->put("/posts/{$post->id}", [
+        'name' => '',
+        'content' => '',
+    ]);
+
+    $response->assertSessionHasErrors(['name', 'content']);
+});
+
+it('authorizes edit request via ShowPostEditRequest', function () {
+    $otherUser = User::factory()->create();
+    $post = Post::factory()->create(['user_id' => $otherUser->id]);
+
+    $response = $this->actingAs($this->user)->get("/posts/{$post->id}/edit");
+
+    $response->assertStatus(403);
+});
+
+it('authorizes update request via UpdatePostRequest', function () {
+    $otherUser = User::factory()->create();
+    $post = Post::factory()->create(['user_id' => $otherUser->id]);
+
+    $response = $this->actingAs($this->user)->put("/posts/{$post->id}", [
+        'name' => 'Test',
+        'content' => 'Test content',
+    ]);
+
+    $response->assertStatus(403);
+});
+
+it('authorizes delete request via DestroyPostRequest', function () {
+    $otherUser = User::factory()->create();
+    $post = Post::factory()->create(['user_id' => $otherUser->id]);
+
+    $response = $this->actingAs($this->user)->delete("/posts/{$post->id}");
+
+    $response->assertStatus(403);
 });

@@ -1,5 +1,5 @@
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/react';
+import { type BreadcrumbItem, type SharedData } from '@/types';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Clock, Edit, Eye, MessageCircle, Plus, User } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -52,6 +52,8 @@ interface PostsPageProps {
 }
 
 export default function PostsIndex({ posts }: PostsPageProps) {
+    const { auth } = usePage<SharedData>().props;
+
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
             year: 'numeric',
@@ -159,11 +161,13 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                                             <Eye className="h-4 w-4" />
                                                         </Button>
                                                     </Link>
-                                                    <Link href={`/posts/${post.id}/edit`}>
-                                                        <Button variant="ghost" size="sm">
-                                                            <Edit className="h-4 w-4" />
-                                                        </Button>
-                                                    </Link>
+                                                    {auth.user.id === post.user.id && (
+                                                        <Link href={`/posts/${post.id}/edit`}>
+                                                            <Button variant="ghost" size="sm">
+                                                                <Edit className="h-4 w-4" />
+                                                            </Button>
+                                                        </Link>
+                                                    )}
                                                 </div>
                                             </TableCell>
                                         </TableRow>

@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DestroyPostRequest;
+use App\Http\Requests\ShowPostEditRequest;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -33,13 +36,9 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StorePostRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         $post = $request->user()->posts()->create($validated);
 
@@ -61,7 +60,7 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post): Response
+    public function edit(ShowPostEditRequest $request, Post $post): Response
     {
         return Inertia::render('posts/edit', [
             'post' => $post,
@@ -71,13 +70,9 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post): RedirectResponse
+    public function update(UpdatePostRequest $request, Post $post): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         $post->update($validated);
 
@@ -87,7 +82,7 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post): RedirectResponse
+    public function destroy(DestroyPostRequest $request, Post $post): RedirectResponse
     {
         $post->delete();
 

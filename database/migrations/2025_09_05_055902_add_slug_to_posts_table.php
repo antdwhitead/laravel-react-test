@@ -1,10 +1,10 @@
 <?php
 
 use App\Models\Post;
+use App\Services\PostService;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 
 return new class extends Migration
 {
@@ -19,17 +19,10 @@ return new class extends Migration
         });
 
         // Populate slugs for existing posts
-        Post::whereNull('slug')->orWhere('slug', '')->chunkById(100, function ($posts) {
+        $postService = app(PostService::class);
+        Post::whereNull('slug')->orWhere('slug', '')->chunkById(100, function ($posts) use ($postService) {
             foreach ($posts as $post) {
-                $baseSlug = Str::slug($post->name);
-                $slug = $baseSlug;
-                $counter = 1;
-
-                while (Post::where('slug', $slug)->where('id', '!=', $post->id)->exists()) {
-                    $slug = "{$baseSlug}-{$counter}";
-                    $counter++;
-                }
-
+                $slug = $postService->generateUniqueSlug($post->name, $post->id);
                 $post->update(['slug' => $slug]);
             }
         });

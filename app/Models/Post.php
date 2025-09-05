@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Observers\PostObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,6 +37,18 @@ class Post extends Model
         return 'slug';
     }
 
+
+    /**
+     * Scope a query to search posts by term.
+     */
+    public function scopeSearch(Builder $query, string $term): Builder
+    {
+        return $query->where(function ($q) use ($term) {
+            $q->where('name', 'like', "%{$term}%")
+              ->orWhere('content', 'like', "%{$term}%")
+              ->orWhere('category', 'like', "%{$term}%");
+        });
+    }
 
     /**
      * Generate a unique slug from the given name.

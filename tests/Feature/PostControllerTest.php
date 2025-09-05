@@ -316,3 +316,97 @@ it('validates slug uniqueness when updating post', function () {
     $response->assertSessionHasErrors(['slug']);
 });
 
+it('can search posts by name', function () {
+    Post::factory()->create(['name' => 'Laravel Tutorial', 'content' => 'Learning Laravel basics']);
+    Post::factory()->create(['name' => 'React Guide', 'content' => 'Building React apps']);
+    Post::factory()->create(['name' => 'Vue.js Basics', 'content' => 'Getting started with Vue']);
+
+    $response = $this->actingAs($this->user)->get('/posts?search=Laravel');
+
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('posts/index')
+        ->has('posts.data', 1)
+        ->where('posts.data.0.name', 'Laravel Tutorial')
+        ->where('filters.search', 'Laravel')
+    );
+});
+
+it('can search posts by content', function () {
+    Post::factory()->create(['name' => 'Tutorial One', 'content' => 'This covers React development']);
+    Post::factory()->create(['name' => 'Tutorial Two', 'content' => 'This covers Laravel development']);
+    Post::factory()->create(['name' => 'Tutorial Three', 'content' => 'This covers Vue development']);
+
+    $response = $this->actingAs($this->user)->get('/posts?search=React');
+
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('posts/index')
+        ->has('posts.data', 1)
+        ->where('posts.data.0.name', 'Tutorial One')
+        ->where('filters.search', 'React')
+    );
+});
+
+it('can search posts by category', function () {
+    Post::factory()->create(['name' => 'Post One', 'category' => 'Technology']);
+    Post::factory()->create(['name' => 'Post Two', 'category' => 'Business']);
+    Post::factory()->create(['name' => 'Post Three', 'category' => 'Technology']);
+
+    $response = $this->actingAs($this->user)->get('/posts?search=Technology');
+
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('posts/index')
+        ->has('posts.data', 2)
+        ->where('filters.search', 'Technology')
+    );
+});
+
+it('returns empty results for non-matching search', function () {
+    Post::factory()->count(3)->create();
+
+    $response = $this->actingAs($this->user)->get('/posts?search=nonexistent');
+
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('posts/index')
+        ->has('posts.data', 0)
+        ->where('filters.search', 'nonexistent')
+    );
+});
+
+it('returns all posts when search is empty', function () {
+    Post::factory()->count(3)->create();
+
+    $response = $this->actingAs($this->user)->get('/posts');
+
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('posts/index')
+        ->has('posts.data', 3)
+        ->where('filters.search', '')
+    );
+});
+
+it('maintains pagination with search results', function () {
+    // Create 12 posts with Laravel in the name
+    for ($i = 1; $i <= 12; $i++) {
+        Post::factory()->create(['name' => "Laravel Tutorial {$i}"]);
+    }
+
+    // Create some posts without Laravel
+    Post::factory()->count(3)->create(['name' => 'React Tutorial']);
+
+    $response = $this->actingAs($this->user)->get('/posts?search=Laravel');
+
+    $response->assertStatus(200);
+    $response->assertInertia(fn ($page) => $page
+        ->component('posts/index')
+        ->has('posts.data', 10) // Should be limited to 10 per page
+        ->where('posts.total', 12)
+        ->where('posts.last_page', 2)
+        ->where('filters.search', 'Laravel')
+    );
+});
+

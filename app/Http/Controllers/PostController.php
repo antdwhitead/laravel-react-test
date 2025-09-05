@@ -8,6 +8,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -16,12 +17,21 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $posts = Post::with(['user', 'comments'])->latest()->paginate(10);
+        $search = $request->get('search', '');
+
+        $posts = Post::with(['user', 'comments'])
+            ->when($search, fn($query) => $query->search($search))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('posts/index', [
             'posts' => $posts,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 

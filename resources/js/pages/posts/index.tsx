@@ -1,9 +1,11 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, Link, usePage } from '@inertiajs/react';
-import { Clock, Edit, Eye, MessageCircle, Plus, User } from 'lucide-react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Clock, Edit, Eye, MessageCircle, Plus, Search, User, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 
@@ -50,10 +52,38 @@ interface PostsPageProps {
             active: boolean;
         }>;
     };
+    filters: {
+        search: string;
+    };
 }
 
-export default function PostsIndex({ posts }: PostsPageProps) {
+export default function PostsIndex({ posts, filters }: PostsPageProps) {
     const { auth } = usePage<SharedData>().props;
+    const [search, setSearch] = useState(filters.search || '');
+    const [isSearching, setIsSearching] = useState(false);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (search !== filters.search) {
+                setIsSearching(true);
+                router.get(
+                    '/posts',
+                    { search: search || undefined },
+                    {
+                        preserveState: true,
+                        preserveScroll: true,
+                        onFinish: () => setIsSearching(false),
+                    }
+                );
+            }
+        }, 300); // 300ms debounce
+
+        return () => clearTimeout(timeoutId);
+    }, [search, filters.search]);
+
+    const clearSearch = () => {
+        setSearch('');
+    };
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('en-US', {
@@ -83,26 +113,76 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                     </Link>
                 </div>
 
+                {/* Search Bar */}
+                <div className="relative max-w-md">
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                        type="text"
+                        placeholder="Search posts by title, content, or category..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="pl-10 pr-10"
+                    />
+                    {search && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={clearSearch}
+                            className="absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2 p-0"
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    )}
+                    {isSearching && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        </div>
+                    )}
+                </div>
+
                 {posts.data.length === 0 ? (
                     <Card className="py-12 text-center">
                         <CardContent>
                             <div className="flex flex-col items-center gap-4">
                                 <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-full">
-                                    <Plus className="text-muted-foreground h-6 w-6" />
+                                    {search ? (
+                                        <Search className="text-muted-foreground h-6 w-6" />
+                                    ) : (
+                                        <Plus className="text-muted-foreground h-6 w-6" />
+                                    )}
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-semibold">No posts yet</h3>
-                                    <p className="text-muted-foreground text-sm">Create your first blog post to get started.</p>
+                                    <h3 className="text-lg font-semibold">
+                                        {search ? 'No posts found' : 'No posts yet'}
+                                    </h3>
+                                    <p className="text-muted-foreground text-sm">
+                                        {search
+                                            ? `No posts match "${search}". Try adjusting your search terms.`
+                                            : 'Create your first blog post to get started.'}
+                                    </p>
                                 </div>
-                                <Link href="/posts/create">
-                                    <Button>Create Post</Button>
-                                </Link>
+                                {search ? (
+                                    <Button variant="outline" onClick={clearSearch}>
+                                        Clear Search
+                                    </Button>
+                                ) : (
+                                    <Link href="/posts/create">
+                                        <Button>Create Post</Button>
+                                    </Link>
+                                )}
                             </div>
                         </CardContent>
                     </Card>
                 ) : (
                     <div className="space-y-4">
                         <Card className="overflow-hidden">
+                            {search && (
+                                <div className="border-b bg-muted/30 px-4 py-2">
+                                    <p className="text-sm text-muted-foreground">
+                                        Found {posts.total} result{posts.total !== 1 ? 's' : ''} for "{search}"
+                                    </p>
+                                </div>
+                            )}
                             <Table className="table-fixed">
                                 <TableHeader>
                                     <TableRow>

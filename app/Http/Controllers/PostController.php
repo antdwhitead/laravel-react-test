@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DestroyPostRequest;
+use App\Http\Requests\ShowPostEditRequest;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -13,12 +17,28 @@ class PostController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $posts = Post::with(['user', 'comments'])->latest()->paginate(10);
+        $search = $request->get('search', '');
+
+        $page = $request->query('page', 1);
+        $posts = Post::with(['user', 'comments'])
+            ->when($search, fn($query) => $query->search($search))
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $postPaginateProp = $posts->toArray(); // To access paginate property
+        $nextPageExists = $postPaginateProp['current_page'] < $postPaginateProp['last_page'];
 
         return Inertia::render('posts/index', [
-            'posts' => $posts,
+            'posts' => Inertia::merge($posts->items()),
+            'total' => $postPaginateProp['total'],
+            'page' => $page,
+            'nextPageExists' => $nextPageExists,
+            'filters' => [
+                'search' => $search,
+            ],
         ]);
     }
 
@@ -33,13 +53,9 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(StorePostRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         $post = $request->user()->posts()->create($validated);
 
@@ -61,7 +77,7 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Post $post): Response
+    public function edit(ShowPostEditRequest $request, Post $post): Response
     {
         return Inertia::render('posts/edit', [
             'post' => $post,
@@ -71,13 +87,9 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post): RedirectResponse
+    public function update(UpdatePostRequest $request, Post $post): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'content' => 'required|string',
-            'category' => 'nullable|string|max:255',
-        ]);
+        $validated = $request->validated();
 
         $post->update($validated);
 
@@ -87,7 +99,7 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Post $post): RedirectResponse
+    public function destroy(DestroyPostRequest $request, Post $post): RedirectResponse
     {
         $post->delete();
 

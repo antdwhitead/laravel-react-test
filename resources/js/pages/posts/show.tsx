@@ -23,6 +23,7 @@ interface Comment {
 interface Post {
     id: number;
     name: string;
+    slug: string;
     content: string;
     category?: string;
     created_at: string;
@@ -54,7 +55,7 @@ export default function ShowPost({ post }: PostShowProps) {
         },
         {
             title: post.name.length > 30 ? post.name.substring(0, 30) + '...' : post.name,
-            href: `/posts/${post.id}`,
+            href: `/posts/${post.slug}`,
         },
     ];
 
@@ -124,7 +125,7 @@ export default function ShowPost({ post }: PostShowProps) {
                     </div>
                     {isOwner && (
                         <div className="flex gap-2">
-                            <Link href={`/posts/${post.id}/edit`}>
+                            <Link href={`/posts/${post.slug}/edit`}>
                                 <Button variant="outline" size="sm">
                                     <Edit className="h-4 w-4" />
                                     Edit

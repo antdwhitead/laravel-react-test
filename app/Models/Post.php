@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Str;
 
 #[ObservedBy([PostObserver::class])]
 class Post extends Model
@@ -50,31 +49,6 @@ class Post extends Model
         });
     }
 
-    /**
-     * Generate a unique slug from the given name.
-     */
-    public static function generateUniqueSlug(string $name, ?int $id = null): string
-    {
-        $baseSlug = Str::slug($name);
-        $slug = $baseSlug ?: 'untitled';
-        $counter = 1;
-
-        $query = static::where('slug', $slug);
-        if ($id) {
-            $query->where('id', '!=', $id);
-        }
-
-        while ($query->exists()) {
-            $slug = "{$baseSlug}-{$counter}";
-            $counter++;
-            $query = static::where('slug', $slug);
-            if ($id) {
-                $query->where('id', '!=', $id);
-            }
-        }
-
-        return $slug;
-    }
 
     /**
      * Get the user that owns the post.

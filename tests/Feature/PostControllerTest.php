@@ -18,7 +18,7 @@ it('can display posts index page', function () {
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
         ->component('posts/index')
-        ->has('posts.data', 3)
+        ->has('posts', 3)
     );
 });
 
@@ -73,7 +73,7 @@ it('can store a post without a slug', function () {
         'category' => 'Technology',
         'user_id' => $this->user->id,
     ]);
-    
+
     $post = Post::where('name', 'Test Post Without Slug')->first();
     expect($post->slug)->toEqual('test-post-without-slug');
 });
@@ -326,8 +326,8 @@ it('can search posts by name', function () {
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
         ->component('posts/index')
-        ->has('posts.data', 1)
-        ->where('posts.data.0.name', 'Laravel Tutorial')
+        ->has('posts', 1)
+        ->where('posts.0.name', 'Laravel Tutorial')
         ->where('filters.search', 'Laravel')
     );
 });
@@ -342,8 +342,8 @@ it('can search posts by content', function () {
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
         ->component('posts/index')
-        ->has('posts.data', 1)
-        ->where('posts.data.0.name', 'Tutorial One')
+        ->has('posts', 1)
+        ->where('posts.0.name', 'Tutorial One')
         ->where('filters.search', 'React')
     );
 });
@@ -358,7 +358,7 @@ it('can search posts by category', function () {
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
         ->component('posts/index')
-        ->has('posts.data', 2)
+        ->has('posts', 2)
         ->where('filters.search', 'Technology')
     );
 });
@@ -371,7 +371,7 @@ it('returns empty results for non-matching search', function () {
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
         ->component('posts/index')
-        ->has('posts.data', 0)
+        ->has('posts', 0)
         ->where('filters.search', 'nonexistent')
     );
 });
@@ -384,7 +384,7 @@ it('returns all posts when search is empty', function () {
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
         ->component('posts/index')
-        ->has('posts.data', 3)
+        ->has('posts', 3)
         ->where('filters.search', '')
     );
 });
@@ -403,9 +403,8 @@ it('maintains pagination with search results', function () {
     $response->assertStatus(200);
     $response->assertInertia(fn ($page) => $page
         ->component('posts/index')
-        ->has('posts.data', 10) // Should be limited to 10 per page
-        ->where('posts.total', 12)
-        ->where('posts.last_page', 2)
+        ->has('posts', 10) // Should be limited to 10 per page
+        ->where('total', 12)
         ->where('filters.search', 'Laravel')
     );
 });

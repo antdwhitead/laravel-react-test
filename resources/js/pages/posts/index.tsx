@@ -1,5 +1,5 @@
 import { type BreadcrumbItem, type SharedData } from '@/types';
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router, usePage, WhenVisible } from '@inertiajs/react';
 import { Clock, Edit, Eye, MessageCircle, Plus, Search, User, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -40,24 +40,17 @@ interface Post {
 }
 
 interface PostsPageProps {
-    posts: {
-        data: Post[];
-        current_page: number;
-        per_page: number;
-        total: number;
-        last_page: number;
-        links: Array<{
-            url: string | null;
-            label: string;
-            active: boolean;
-        }>;
-    };
+    posts: Post[];
     filters: {
         search: string;
     };
+    page: number;
+    nextPageExists: boolean;
+    total: number;
 }
 
-export default function PostsIndex({ posts, filters }: PostsPageProps) {
+
+export default function PostsIndex({ posts, filters, page, nextPageExists, total }: PostsPageProps) {
     const { auth } = usePage<SharedData>().props;
     const [search, setSearch] = useState(filters.search || '');
     const [isSearching, setIsSearching] = useState(false);
@@ -140,7 +133,7 @@ export default function PostsIndex({ posts, filters }: PostsPageProps) {
                     )}
                 </div>
 
-                {posts.data.length === 0 ? (
+                {posts.length === 0 ? (
                     <Card className="py-12 text-center">
                         <CardContent>
                             <div className="flex flex-col items-center gap-4">
@@ -179,7 +172,7 @@ export default function PostsIndex({ posts, filters }: PostsPageProps) {
                             {search && (
                                 <div className="border-b bg-muted/30 px-4 py-2">
                                     <p className="text-sm text-muted-foreground">
-                                        Found {posts.total} result{posts.total !== 1 ? 's' : ''} for "{search}"
+                                        Found {total} result{total !== 1 ? 's' : ''} for "{search}"
                                     </p>
                                 </div>
                             )}
@@ -195,7 +188,7 @@ export default function PostsIndex({ posts, filters }: PostsPageProps) {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
-                                    {posts.data.map((post) => (
+                                    {posts.map((post) => (
                                         <TableRow key={post.id}>
                                             <TableCell className="whitespace-normal">
                                                 <div>
@@ -253,30 +246,23 @@ export default function PostsIndex({ posts, filters }: PostsPageProps) {
                                             </TableCell>
                                         </TableRow>
                                     ))}
+                                    {nextPageExists && (
+                                        <WhenVisible
+                                            always
+                                            params={{
+                                                data: {
+                                                    page: + page + 1,
+                                                },
+                                                only: ['posts', 'page', 'isNextPageExists'],
+                                            }}
+                                            fallback={<p>You reach the end.</p>}
+                                        >
+                                            <p>Loading...</p>
+                                        </WhenVisible>
+                                    )}
                                 </TableBody>
                             </Table>
                         </Card>
-
-                        {/* Pagination */}
-                        {posts.last_page > 1 && (
-                            <div className="flex items-center justify-center gap-2">
-                                {posts.links.map((link, index) => (
-                                    <span key={index}>
-                                        {link.url ? (
-                                            <Link href={link.url}>
-                                                <Button
-                                                    variant={link.active ? 'default' : 'outline'}
-                                                    size="sm"
-                                                    dangerouslySetInnerHTML={{ __html: link.label }}
-                                                />
-                                            </Link>
-                                        ) : (
-                                            <Button variant="outline" size="sm" disabled dangerouslySetInnerHTML={{ __html: link.label }} />
-                                        )}
-                                    </span>
-                                ))}
-                            </div>
-                        )}
                     </div>
                 )}
             </div>

@@ -21,14 +21,21 @@ class PostController extends Controller
     {
         $search = $request->get('search', '');
 
+        $page = $request->query('page', 1);
         $posts = Post::with(['user', 'comments'])
             ->when($search, fn($query) => $query->search($search))
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
+        $postPaginateProp = $posts->toArray(); // To access paginate property
+        $nextPageExists = $postPaginateProp['current_page'] < $postPaginateProp['last_page'];
+
         return Inertia::render('posts/index', [
-            'posts' => $posts,
+            'posts' => Inertia::merge($posts->items()),
+            'total' => $postPaginateProp['total'],
+            'page' => $page,
+            'nextPageExists' => $nextPageExists,
             'filters' => [
                 'search' => $search,
             ],

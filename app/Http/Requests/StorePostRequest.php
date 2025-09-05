@@ -23,6 +23,7 @@ class StorePostRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255', 'unique:posts'],
             'content' => ['required', 'string'],
             'category' => ['nullable', 'string', 'max:255'],
         ];

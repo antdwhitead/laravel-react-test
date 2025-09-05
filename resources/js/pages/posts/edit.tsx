@@ -13,6 +13,7 @@ import AppLayout from '@/layouts/app-layout';
 interface Post {
     id: number;
     name: string;
+    slug: string;
     content: string;
     category?: string;
     created_at: string;
@@ -30,6 +31,7 @@ interface EditPostProps {
 
 type PostForm = {
     name: string;
+    slug: string;
     content: string;
     category: string;
 };
@@ -42,11 +44,11 @@ export default function EditPost({ post }: EditPostProps) {
         },
         {
             title: post.name.length > 20 ? post.name.substring(0, 20) + '...' : post.name,
-            href: `/posts/${post.id}`,
+            href: `/posts/${post.slug}`,
         },
         {
             title: 'Edit',
-            href: `/posts/${post.id}/edit`,
+            href: `/posts/${post.slug}/edit`,
         },
     ];
 
@@ -59,6 +61,7 @@ export default function EditPost({ post }: EditPostProps) {
         processing,
     } = useForm<PostForm>({
         name: post.name,
+        slug: post.slug,
         content: post.content,
         category: post.category || '',
     });
@@ -66,12 +69,12 @@ export default function EditPost({ post }: EditPostProps) {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        put(route('posts.update', post.id));
+        put(route('posts.update', post.slug));
     };
 
     const handleDelete = () => {
         if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
-            destroy(route('posts.destroy', post.id));
+            destroy(route('posts.destroy', post.slug));
         }
     };
 
@@ -81,7 +84,7 @@ export default function EditPost({ post }: EditPostProps) {
 
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="flex items-center gap-4">
-                    <Link href={`/posts/${post.id}`}>
+                    <Link href={`/posts/${post.slug}`}>
                         <Button variant="outline" size="icon">
                             <ArrowLeft className="h-4 w-4" />
                         </Button>
@@ -118,6 +121,19 @@ export default function EditPost({ post }: EditPostProps) {
                                 </div>
 
                                 <div className="space-y-2">
+                                    <Label htmlFor="slug">Slug</Label>
+                                    <Input
+                                        id="slug"
+                                        type="text"
+                                        value={data.slug}
+                                        onChange={(e) => setData('slug', e.target.value)}
+                                        placeholder="URL slug"
+                                        aria-invalid={!!errors.slug}
+                                    />
+                                    <InputError message={errors.slug} />
+                                </div>
+
+                                <div className="space-y-2">
                                     <Label htmlFor="category">Category</Label>
                                     <Input
                                         id="category"
@@ -149,7 +165,7 @@ export default function EditPost({ post }: EditPostProps) {
                                         {processing ? 'Updating...' : 'Update Post'}
                                     </Button>
 
-                                    <Link href={`/posts/${post.id}`}>
+                                    <Link href={`/posts/${post.slug}`}>
                                         <Button type="button" variant="outline">
                                             Cancel
                                         </Button>

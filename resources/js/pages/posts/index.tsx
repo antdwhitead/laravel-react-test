@@ -17,6 +17,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface Post {
     id: number;
     name: string;
+    slug: string;
     content: string;
     category?: string;
     created_at: string;
@@ -119,7 +120,7 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                             <TableCell className="whitespace-normal">
                                                 <div>
                                                     <Link
-                                                        href={`/posts/${post.id}`}
+                                                        href={`/posts/${post.slug}`}
                                                         className="hover:text-primary block truncate font-medium transition-colors"
                                                         title={post.name}
                                                     >
@@ -156,13 +157,13 @@ export default function PostsIndex({ posts }: PostsPageProps) {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex gap-1">
-                                                    <Link href={`/posts/${post.id}`}>
+                                                    <Link href={`/posts/${post.slug}`}>
                                                         <Button variant="ghost" size="sm">
                                                             <Eye className="h-4 w-4" />
                                                         </Button>
                                                     </Link>
                                                     {auth.user.id === post.user.id && (
-                                                        <Link href={`/posts/${post.id}/edit`}>
+                                                        <Link href={`/posts/${post.slug}/edit`}>
                                                             <Button variant="ghost" size="sm">
                                                                 <Edit className="h-4 w-4" />
                                                             </Button>

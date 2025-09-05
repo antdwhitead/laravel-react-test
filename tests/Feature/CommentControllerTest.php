@@ -19,7 +19,7 @@ it('can store a new comment', function () {
 
     $response = $this->actingAs($this->user)->post('/comments', $commentData);
 
-    $response->assertRedirect("/posts/{$this->post->id}");
+    $response->assertRedirect("/posts/{$this->post->slug}");
     $this->assertDatabaseHas('comments', [
         'post_id' => $this->post->id,
         'content' => 'This is a test comment.',

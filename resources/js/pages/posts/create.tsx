@@ -23,6 +23,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 type PostForm = {
     name: string;
+    slug: string;
     content: string;
     category: string;
 };
@@ -30,9 +31,11 @@ type PostForm = {
 export default function CreatePost() {
     const { data, setData, post, errors, processing, reset } = useForm<PostForm>({
         name: '',
+        slug: '',
         content: '',
         category: '',
     });
+
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -78,6 +81,22 @@ export default function CreatePost() {
                                         aria-invalid={!!errors.name}
                                     />
                                     <InputError message={errors.name} />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="slug">Slug</Label>
+                                    <Input
+                                        id="slug"
+                                        type="text"
+                                        value={data.slug}
+                                        onChange={(e) => setData('slug', e.target.value)}
+                                        placeholder="URL slug (optional)"
+                                        aria-invalid={!!errors.slug}
+                                    />
+                                    <InputError message={errors.slug} />
+                                    <p className="text-sm text-muted-foreground">
+                                        Leave empty to auto-generate from title
+                                    </p>
                                 </div>
 
                                 <div className="space-y-2">

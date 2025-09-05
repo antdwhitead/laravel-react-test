@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Observers\PostObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+#[ObservedBy([PostObserver::class])]
 class Post extends Model
 {
     /** @use HasFactory<\Database\Factories\PostFactory> */
@@ -33,25 +36,6 @@ class Post extends Model
         return 'slug';
     }
 
-    /**
-     * Boot the model.
-     */
-    protected static function boot(): void
-    {
-        parent::boot();
-
-        static::creating(function ($post) {
-            if (empty($post->slug)) {
-                $post->slug = static::generateUniqueSlug($post->name);
-            }
-        });
-
-        static::updating(function ($post) {
-            if ($post->isDirty('name') && empty($post->slug)) {
-                $post->slug = static::generateUniqueSlug($post->name);
-            }
-        });
-    }
 
     /**
      * Generate a unique slug from the given name.
@@ -68,7 +52,7 @@ class Post extends Model
         }
 
         while ($query->exists()) {
-            $slug = ($baseSlug ?: 'untitled').'-'.$counter;
+            $slug = "{$baseSlug}-{$counter}";
             $counter++;
             $query = static::where('slug', $slug);
             if ($id) {

@@ -36,16 +36,6 @@ export default function CreatePost() {
         category: '',
     });
 
-    // Auto-generate slug from title when user leaves the title field
-    const handleTitleBlur = () => {
-        if (data.name && !data.slug) {
-            const generatedSlug = data.name
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '');
-            setData('slug', generatedSlug);
-        }
-    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -87,7 +77,6 @@ export default function CreatePost() {
                                         type="text"
                                         value={data.name}
                                         onChange={(e) => setData('name', e.target.value)}
-                                        onBlur={handleTitleBlur}
                                         placeholder="Enter post title..."
                                         aria-invalid={!!errors.name}
                                     />
@@ -95,19 +84,18 @@ export default function CreatePost() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label htmlFor="slug">Slug *</Label>
+                                    <Label htmlFor="slug">Slug</Label>
                                     <Input
                                         id="slug"
                                         type="text"
                                         value={data.slug}
                                         onChange={(e) => setData('slug', e.target.value)}
-                                        placeholder="URL slug (required)"
-                                        required
+                                        placeholder="URL slug (optional)"
                                         aria-invalid={!!errors.slug}
                                     />
                                     <InputError message={errors.slug} />
                                     <p className="text-sm text-muted-foreground">
-                                        Auto-generated when you finish typing the title
+                                        Leave empty to auto-generate from title
                                     </p>
                                 </div>
 

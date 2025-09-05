@@ -54,7 +54,28 @@ it('can store a new post', function () {
 it('validates required fields when storing a post', function () {
     $response = $this->actingAs($this->user)->post('/posts', []);
 
-    $response->assertSessionHasErrors(['name', 'slug', 'content']);
+    $response->assertSessionHasErrors(['name', 'content']);
+});
+
+it('can store a post without a slug', function () {
+    $postData = [
+        'name' => 'Test Post Without Slug',
+        'content' => 'This is test content for the post.',
+        'category' => 'Technology',
+    ];
+
+    $response = $this->actingAs($this->user)->post('/posts', $postData);
+
+    $response->assertRedirect();
+    $this->assertDatabaseHas('posts', [
+        'name' => 'Test Post Without Slug',
+        'content' => 'This is test content for the post.',
+        'category' => 'Technology',
+        'user_id' => $this->user->id,
+    ]);
+    
+    $post = Post::where('name', 'Test Post Without Slug')->first();
+    expect($post->slug)->toEqual('test-post-without-slug');
 });
 
 it('can display a single post', function () {
@@ -169,7 +190,7 @@ it('validates post data using StorePostRequest', function () {
         'content' => '',
     ]);
 
-    $response->assertSessionHasErrors(['name', 'slug', 'content']);
+    $response->assertSessionHasErrors(['name', 'content']);
 });
 
 it('validates post data using UpdatePostRequest', function () {
@@ -214,17 +235,6 @@ it('authorizes delete request via DestroyPostRequest', function () {
     $response->assertStatus(403);
 });
 
-it('requires slug when creating post', function () {
-    $postData = [
-        'name' => 'Test Post Title',
-        'content' => 'This is test content for the post.',
-        'category' => 'Technology',
-    ];
-
-    $response = $this->actingAs($this->user)->post('/posts', $postData);
-
-    $response->assertSessionHasErrors(['slug']);
-});
 
 it('uses provided slug when creating post with slug', function () {
     $postData = [

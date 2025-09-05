@@ -16,9 +16,12 @@ class PostFactory extends Factory
      */
     public function definition(): array
     {
+        $name = fake()->sentence(3);
+
         return [
             'user_id' => \App\Models\User::factory(),
-            'name' => fake()->sentence(3),
+            'name' => $name,
+            'slug' => \Illuminate\Support\Str::slug($name),
             'content' => fake()->paragraphs(3, true),
             'category' => fake()->randomElement(['Technology', 'Business', 'Health', 'Travel', 'Food', 'Entertainment', 'Sports', 'Education']),
         ];

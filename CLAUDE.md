@@ -65,3 +65,10 @@ This is a Laravel + React application using Inertia.js for seamless SPA-like exp
 - Component variants using `class-variance-authority`
 - Custom UI components follow Radix + shadcn/ui patterns
 - Appearance system with light/dark mode support
+
+### Development process
+
+## Backend
+- Read .claude/laravel-php-guidelines.md and use this as reference for any laravel code
+- All backend code must be feature/unit tested
+- Your task is only complete once you have run all tests and they pass
